@@ -1,6 +1,5 @@
 # ✏️ArrayList
 ## 📜API
-<hr>
 
 공식 문서 : [ArrayList (Java Platform SE 8)](https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html)
 
@@ -13,8 +12,6 @@ All Implemented interfaces를 살펴보면, `ArrayList`는 `List<E>`, `Collectio
 <br>
 
 ## 1️⃣ArrayList의 특징
-<hr>
-
 참고 글 : [자바 ArrayList 구조 & 사용법 정리](https://inpa.tistory.com/entry/JAVA-%E2%98%95-ArrayList-%EA%B5%AC%EC%A1%B0-%EC%82%AC%EC%9A%A9%EB%B2%95)
 - 연속적인(중간에 빈 공간이 없는) 데이터의 리스트
 - 내부적으로 Object[]배열을 이용하여 요소를 저장
@@ -27,7 +24,6 @@ All Implemented interfaces를 살펴보면, `ArrayList`는 `List<E>`, `Collectio
 <br>
 
 ## 2️⃣ArrayList vs Array(배열)
-<hr>
 
 ### 배열
 - 정적할당 : 크기 변경 불가
