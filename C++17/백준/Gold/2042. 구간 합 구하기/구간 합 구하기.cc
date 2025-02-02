@@ -1,15 +1,7 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
-
-vector<long long>tree;
-vector<long long>arr;
-long long init(long long n, long long s, long long e);
-long long update(long long i, long long x, long long n, long long s, long long e);
-long long query(long long qs, long long qe, long long n, long long s, long long e);
-
 
 int main() {
 	ios::sync_with_stdio(false);
@@ -19,67 +11,61 @@ int main() {
 	int n, m, k;
 	cin >> n >> m >> k;
 
-	arr.resize(n, 0);
+	vector v(n, 0LL);  
+;	for (int i = 0;i < n;i++) cin >> v[i];
 
-	int tree_size = 4 * n + 1;
-	tree.resize(tree_size, 0);
+	int sz = 1;
+	while (sz < n)	sz *= 2;
+	vector tree(sz * 2, 0LL);
 
-	for (int i = 0; i < n; ++i) {
-		cin >> arr[i];
-	}
+	auto init = [&] {
+		for (int i = 0; i < n;i++) tree[i + sz] = v[i];
+		for (int i = sz - 1;i >= 1;i--) {
+			tree[i] = tree[2 * i] + tree[2 * i + 1];
+		}
+	};
+	init();
 
-	init(1, 0, n-1);	// 트리 생성
+	auto update = [&](int i, long long x) {
+		i += sz;
+		tree[i] = x;
+		while (i > 1) {
+			i /= 2;
+			tree[i] = tree[2 * i] + tree[2 * i + 1];
+		}
+	};
+	
+	auto query = [&](int l, int r) {
+		l += sz;
+		r += sz;
+		long long ans = 0;
 
-	long long a, b, c;
-	//	a==1 : b번째 수를 c로 바꾸기
-	//	a==2 : b~c 까지의 합 구하기
+		while (l <= r) {
+			if (l % 2 == 1) {
+				ans += tree[l];
+				l++;
+			}
+			if (r % 2 == 0) {
+				ans += tree[r];
+				r--;
+			}
+			l /= 2;
+			r /= 2;
+		}
+		return ans;
+	};
 
 	for (int i = 0;i < m + k;i++) {
+		long long a, b, c;
 		cin >> a >> b >> c;
+
 		if (a == 1) {
-			update(b - 1, c, 1, 0, n - 1);
+			// Point update query
+			update(b - 1, c);
 		}
 		if (a == 2) {
-			cout << query(b-1, c-1, 1, 0, n - 1) << '\n';
+			// print
+			cout << query(b - 1, c - 1) << '\n';
 		}
 	}
-
-}
-
-// 트리를 초기화하는 함수
-long long init(long long n, long long s, long long e){
-	if (s == e)
-		tree[n] = arr[s];
-	else {
-		int mid = (s + e) / 2;
-		tree[n] = init(n * 2, s, mid) + init(n * 2 + 1, mid+1, e);
-	}
-
-	return tree[n];
-}
-
-// arr배열의 i번째 값을 x로 변경하는 함수
-long long update(long long i, long long x, long long n, long long s, long long e) {
-	if (e < i || i < s)	// 나랑 무관한 경우 <=> 구간이 안 겹침
-		return tree[n];	// 원래 값 반환
-	if (i <= s && e <= i)
-		return tree[n]=x;	// 값 변경
-	
-	long long mid = (s + e) / 2;
-	long long left = update(i, x, 2 * n, s, mid);
-	long long right = update(i, x, 2 * n + 1, mid + 1, e);
-
-	return tree[n] = left+right;
-}
-
-long long query(long long qs, long long qe, long long n, long long s, long long e) {
-	if (e < qs || qe < s)	// 나랑 무관한 경우 <=> 구간이 안 겹침
-		return 0;
-	if (qs <= s && e <= qe)
-		return tree[n];
-	long long mid = (s + e) / 2;
-	long long left = query(qs, qe, 2 * n, s, mid);
-	long long right = query(qs, qe, 2 * n + 1, mid + 1, e);
-
-	return left + right;
 }
