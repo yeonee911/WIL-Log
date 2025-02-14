@@ -5,22 +5,6 @@
 
 using namespace std;
 
-vector<int> p;
-
-int find(int x) {
-	// 배열의 인덱스와 값이 같으면 루트 노드이다
-	if (x == p[x]) return x;
-	return p[x] = find(p[x]);
-}
-
-void merge(int x, int y) {
-	x = find(x);
-	y = find(y);
-	if (x == y) return;
-	p[x] = y;
-}
-
-
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(NULL);
@@ -29,8 +13,32 @@ int main() {
 	int n, m;
 	cin >> n >> m;
 
-	p.resize(n + 1);
-	for (int i = 0;i <= n;i++) p[i] = i;
+	vector p(n + 1, -1);
+
+	auto find = [&](int x) {
+		int root = x;
+		while (p[root] >= 0) root = p[root];
+
+		while (x != root) {
+			int nxt = p[x];
+			p[x] = root;
+
+			x = nxt;
+		}
+		return root;
+	};
+
+	auto merge = [&](int a, int b) -> bool{
+		a = find(a);
+		b = find(b);
+		if (a == b) return 0;
+		if (-p[a] < -p[b]) swap(a, b);
+
+		p[a] += p[b];
+		p[b] = a;
+		return 1;
+	};
+	
 
 	for (int i = 0;i < m;i++) {
 		int t, a, b;
