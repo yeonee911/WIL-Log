@@ -1,9 +1,15 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
-#include <set>
+#include <functional>
 
 using namespace std;
+
+vector<int> parent;
+
+int find(int x) {
+    if (x == parent[x]) return x;
+    return parent[x] = find(parent[x]);
+}
 
 int main() {
     ios::sync_with_stdio(false);
@@ -13,20 +19,27 @@ int main() {
     int g, p;
     cin >> g >> p;
 
-    set<int>s;
-    for (int i = 1; i <= g;i++) s.insert(i);
+    parent.resize(g + 1);
+    for (int i = 1; i <= g;i++) parent[i] = i;
+
+    auto merge = [&](int u, int v) -> bool {
+        u = find(u);
+        v = find(v);
+
+        if (u == v) return 0;
+        if (u > v) swap(u, v);
+        parent[v] = u;
+        return 1;
+    };
 
     for (int i = 1;i <= p;i++) {
-        int x;
-        cin >> x;
-        auto it = s.upper_bound(x);
-        if (it == s.begin()) {  // 더 이상 삭제할 값이 없다
-            cout << i - 1;  // 해당 비행기부터 도킹 불가하므로 -1
+        int x; cin >> x;
+        x = find(x);
+        if (x == 0) {
+            cout << i - 1;
             return 0;
         }
-        else {
-            s.erase(--it);
-        }
+        merge(x, x - 1);
     }
     cout << p;
 }
