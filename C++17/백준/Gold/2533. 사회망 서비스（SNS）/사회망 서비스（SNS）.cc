@@ -41,7 +41,7 @@ int main() {
         g[b].push_back(a);
     }
 
-    dfs(1);
+    dfs(2);
 
-    cout << min(dp[1][0], dp[1][1]);
+    cout << min(dp[2][0], dp[2][1]);
 }
