@@ -10,16 +10,15 @@ vector<int>depth;
 vector<vector<int>>g;
 vector<int>seen;
 
-void dfs(int r, int d) {
+void dfs(int r) {
     if (seen[r]) return;
-
-    depth[r] = d;
     seen[r] = true;
 
     for (auto x : g[r]) {
         if (seen[x]) continue;
         parent[x] = r;
-        dfs(x, d + 1);
+        depth[x] = depth[r] + 1;
+        dfs(x);
     }
 }
 
@@ -29,7 +28,7 @@ int main() {
     cout.tie(NULL);
 
     int n; cin >> n;
-    parent.resize(n + 1, 1);
+    parent.resize(n + 1, 0);
     depth.resize(n + 1, 0);
     g.resize(n + 1);
     seen.resize(n + 1, false);
@@ -39,28 +38,15 @@ int main() {
         g[v].push_back(u);
     }
 
-    dfs(1, 0);
+    dfs(1);
 
     auto lca = [&](int u, int v) {
-        // 노드 depth 맞추기
-        int du = depth[u];  // depth u
-        int dv = depth[v];  // depth v
-        
-        if (du < dv) {        // du > dv
-            swap(du, dv);
-            swap(u, v);
-        }
-
-        while (du != dv) {
-            u = parent[u];
-            du--;
-        }
-
+        if (depth[u] < depth[v]) swap(u, v);
+        while (depth[u] != depth[v]) u = parent[u];
         while (u != v) {
             u = parent[u];
             v = parent[v];
         }
-        
         return u;
     };
 
