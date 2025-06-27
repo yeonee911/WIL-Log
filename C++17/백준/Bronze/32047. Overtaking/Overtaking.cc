@@ -39,7 +39,7 @@ int main() {
 		stack<int> stk;
 		for (int i = 0; i < n; i++) {
 			if (w[i] == 0) continue;
-			if (stk.empty() || (!stk.empty() && stk.top() != w[i])) stk.push(w[i]);
+			if (stk.empty() || (stk.top() != w[i])) stk.push(w[i]);
 		}
 
 		if (stk.empty()) cout << 0 << '\n';
